@@ -3,6 +3,31 @@ import numpy as np
 
 Number = TypeVar("Number", int, float, None)
 
+class _Vec:
+
+    @staticmethod
+    def check(content):
+        for ele in content:
+            if not isinstance(ele, (int, float)) and not ele is None:
+                raise TypeError("Invalid input: only number or None is accepted in a vector!")
+
+    def __init__(self, name):
+        self.name = name
+
+    def __get__(self, instance, cls):
+        if instance is None:
+            return self
+        else:
+            return instance.__dict__[self.name]
+
+    def __set__(self, instance, val: List[Number]):
+        if val is None:
+            instance.__dict__[self.name] = None
+        else:
+            _Vec.check(val)
+            nums = [_ if _ is not None else float('inf') for _ in val]
+            instance.__dict__[self.name] = np.array(nums)
+
 class _Matrix:
 
     @staticmethod
@@ -37,7 +62,7 @@ class LPdata(Data):
     A_eq = _Matrix('A_eq'); b_eq = _Matrix('b_eq')
 
     def __init__(self, x: int):
-        self._cnt = x
+        self.dimen = x
 
     @property
     def bounds(self):
@@ -65,3 +90,11 @@ class LPdata(Data):
                 raise TypeError("Invalid input: only number is accepted in row vector 'c'")
 
         self._c = np.array(val)
+
+class IPdata(LPdata):
+
+    b_ub = _Vec('b_ub')
+    b_eq = _Vec('b_eq')
+
+    def __init__(self, x: int):
+        super().__init__(x)

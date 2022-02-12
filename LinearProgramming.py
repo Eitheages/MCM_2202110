@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 
 from scipy.optimize import linprog # type: ignore
 from mcm.data import LPdata
@@ -6,7 +7,7 @@ from mcm.data import LPdata
 def solve(data: LPdata):
     target = data.c
     if target is None:
-        raise KeyError("Data should contains objective function at least!")
+        raise KeyError("Data should contain objective function at least!")
     return linprog(target, data.A_ub, data.b_ub, data.A_eq, data.b_eq, data.bounds, method = 'simplex')
 
 if __name__ == "__main__":
@@ -26,7 +27,7 @@ if __name__ == "__main__":
     ``bounds``.
     """
 
-    data = LPdata(3)
+    data = LPdata(3) # dimension
     data.c = [-1, 2, 3]
     data.A_ub = [
                     [-2, 1, 1],
